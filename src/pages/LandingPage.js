@@ -53,6 +53,9 @@ const LandingPage = () => {
       <div className="hero-section">
         <h1>Welcome to Sakila DVD Store</h1>
         <p>Your premier destination for movie rentals and entertainment</p>
+        <div className="hero-actions">
+          <Link to="/films" className="hero-button">Search Films</Link>
+        </div>
       </div>
 
       <div className="content-section">

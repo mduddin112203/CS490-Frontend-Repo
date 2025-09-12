@@ -13,6 +13,7 @@ const api = axios.create({
 export const filmsAPI = {
   getTopRented: () => api.get('/films/top-rented'),
   getFilmById: (id) => api.get(`/films/${id}`),
+  searchFilms: (query) => api.get(`/films/search?q=${encodeURIComponent(query)}`),
 };
 
 // Actors API
