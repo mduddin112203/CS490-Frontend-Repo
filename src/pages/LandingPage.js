@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { filmsAPI } from '../services/api';
 import './LandingPage.css';
 
@@ -56,16 +57,18 @@ const LandingPage = () => {
           </div>
           <div className="films-list">
             {topFilms.map((film, index) => (
-              <div key={film.film_id} className="film-item">
-                <div className="film-rank">#{index + 1}</div>
-                <div className="film-info">
-                  <h3 className="film-title">{film.title}</h3>
-                  <div className="film-details">
-                    <span className="category">{film.category_name}</span>
-                    <span className="rental-count">{film.rental_count} rentals</span>
+              <Link key={film.film_id} to={`/films/${film.film_id}`} className="film-item-link">
+                <div className="film-item">
+                  <div className="film-rank">#{index + 1}</div>
+                  <div className="film-info">
+                    <h3 className="film-title">{film.title}</h3>
+                    <div className="film-details">
+                      <span className="category">{film.category_name}</span>
+                      <span className="rental-count">{film.rental_count} rentals</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

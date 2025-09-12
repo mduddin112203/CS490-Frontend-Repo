@@ -12,6 +12,7 @@ const api = axios.create({
 // Films API
 export const filmsAPI = {
   getTopRented: () => api.get('/films/top-rented'),
+  getFilmById: (id) => api.get(`/films/${id}`),
 };
 
 export default api;

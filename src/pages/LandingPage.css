@@ -62,6 +62,12 @@
   gap: 1rem;
 }
 
+.film-item-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .film-item {
   display: flex;
   align-items: center;
@@ -70,11 +76,13 @@
   border-radius: 8px;
   border-left: 4px solid #667eea;
   transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
 }
 
 .film-item:hover {
   transform: translateX(5px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-left-color: #5a6fd8;
 }
 
 .film-rank {
