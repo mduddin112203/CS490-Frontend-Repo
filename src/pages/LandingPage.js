@@ -1,34 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { filmsAPI } from '../services/api';
+import { filmsAPI, actorsAPI } from '../services/api';
 import './LandingPage.css';
 
 const LandingPage = () => {
   const [topFilms, setTopFilms] = useState([]);
+  const [topActors, setTopActors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTopFilms = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await filmsAPI.getTopRented();
-        setTopFilms(response.data);
+        const [filmsResponse, actorsResponse] = await Promise.all([
+          filmsAPI.getTopRented(),
+          actorsAPI.getTopActors()
+        ]);
+        
+        setTopFilms(filmsResponse.data);
+        setTopActors(actorsResponse.data);
       } catch (err) {
-        setError('Failed to load top films. Please try again later.');
-        console.error('Error fetching top films:', err);
+        setError('Failed to load data. Please try again later.');
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTopFilms();
+    fetchData();
   }, []);
 
   if (loading) {
     return (
       <div className="loading">
-        <h2>Loading top films...</h2>
+        <h2>Loading...</h2>
       </div>
     );
   }
@@ -50,26 +56,50 @@ const LandingPage = () => {
       </div>
 
       <div className="content-section">
-        <div className="card">
-          <div className="card-header">
-            <h2 className="card-title">Top 5 Rented Films</h2>
-            <p className="card-subtitle">Most popular movies of all time</p>
+        <div className="content-grid">
+          {/* Top 5 Rented Films */}
+          <div className="card">
+            <div className="card-header">
+              <h2 className="card-title">Top 5 Rented Films</h2>
+              <p className="card-subtitle">Most popular movies of all time</p>
+            </div>
+            <div className="films-list">
+              {topFilms.map((film, index) => (
+                <Link key={film.film_id} to={`/films/${film.film_id}`} className="film-item-link">
+                  <div className="film-item">
+                    <div className="film-rank">#{index + 1}</div>
+                    <div className="film-info">
+                      <h3 className="film-title">{film.title}</h3>
+                      <div className="film-details">
+                        <span className="category">{film.category_name}</span>
+                        <span className="rental-count">{film.rental_count} rentals</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="films-list">
-            {topFilms.map((film, index) => (
-              <Link key={film.film_id} to={`/films/${film.film_id}`} className="film-item-link">
-                <div className="film-item">
-                  <div className="film-rank">#{index + 1}</div>
-                  <div className="film-info">
-                    <h3 className="film-title">{film.title}</h3>
-                    <div className="film-details">
-                      <span className="category">{film.category_name}</span>
-                      <span className="rental-count">{film.rental_count} rentals</span>
+
+          {/* Top 5 Actors */}
+          <div className="card">
+            <div className="card-header">
+              <h2 className="card-title">Top 5 Actors</h2>
+              <p className="card-subtitle">Most prolific actors in our collection</p>
+            </div>
+            <div className="actors-list">
+              {topActors.map((actor, index) => (
+                <div key={actor.actor_id} className="actor-item">
+                  <div className="actor-rank">#{index + 1}</div>
+                  <div className="actor-info">
+                    <h3 className="actor-name">{actor.first_name} {actor.last_name}</h3>
+                    <div className="actor-details">
+                      <span className="film-count">{actor.film_count} films</span>
                     </div>
                   </div>
                 </div>
-              </Link>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
