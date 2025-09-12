@@ -1,41 +1,53 @@
-.landing-page {
+.actor-details-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
-.hero-section {
+.actor-header {
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 2rem;
   background: rgba(0, 0, 0, 0.3);
 }
 
-.hero-section h1 {
-  font-size: 3.5rem;
+.back-link {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
   margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  transition: background 0.3s;
+}
+
+.back-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+  color: white;
+}
+
+.actor-header h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.hero-section p {
-  font-size: 1.5rem;
+.actor-subtitle {
+  font-size: 1.2rem;
   margin: 0;
   opacity: 0.9;
 }
 
-.content-section {
+.actor-content {
   padding: 2rem;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
-.card {
+.actor-info-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
   padding: 2rem;
@@ -44,22 +56,19 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.card-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.card-title {
+.actor-info-card h2 {
   color: #333;
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
   font-weight: 600;
+  text-align: center;
 }
 
 .card-subtitle {
   color: #666;
   font-size: 1.2rem;
-  margin: 0;
+  margin: 0 0 2rem 0;
+  text-align: center;
 }
 
 .films-list {
@@ -138,72 +147,11 @@
   font-size: 1rem;
 }
 
-/* Actors List Styles */
-.actors-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.actor-item-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-
-.actor-item {
-  display: flex;
-  align-items: center;
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #28a745;
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-
-.actor-item:hover {
-  transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-left-color: #218838;
-}
-
-.actor-rank {
-  background: #28a745;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-right: 1.5rem;
-  flex-shrink: 0;
-}
-
-.actor-info {
-  flex: 1;
-}
-
-.actor-name {
-  color: #333;
-  font-size: 1.4rem;
-  margin: 0 0 0.5rem 0;
-  font-weight: 600;
-}
-
-.actor-details {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.film-count {
-  color: #28a745;
-  font-weight: 600;
-  font-size: 1rem;
+.no-films {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1.1rem;
 }
 
 .loading, .error {
@@ -220,18 +168,19 @@
 .error p {
   font-size: 1.2rem;
   opacity: 0.9;
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {
-  .hero-section h1 {
+  .actor-header h1 {
     font-size: 2.5rem;
   }
   
-  .hero-section p {
-    font-size: 1.2rem;
+  .actor-subtitle {
+    font-size: 1rem;
   }
   
-  .card-title {
+  .actor-info-card h2 {
     font-size: 2rem;
   }
   
@@ -246,24 +195,6 @@
   }
   
   .film-details {
-    justify-content: center;
-  }
-  
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .actor-item {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .actor-rank {
-    margin-right: 0;
-    margin-bottom: 1rem;
-  }
-  
-  .actor-details {
     justify-content: center;
   }
 }

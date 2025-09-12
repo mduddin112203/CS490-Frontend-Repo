@@ -18,6 +18,7 @@ export const filmsAPI = {
 // Actors API
 export const actorsAPI = {
   getTopActors: () => api.get('/actors/top'),
+  getActorById: (id) => api.get(`/actors/${id}`),
 };
 
 export default api;

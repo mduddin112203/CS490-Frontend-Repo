@@ -89,15 +89,17 @@ const LandingPage = () => {
             </div>
             <div className="actors-list">
               {topActors.map((actor, index) => (
-                <div key={actor.actor_id} className="actor-item">
-                  <div className="actor-rank">#{index + 1}</div>
-                  <div className="actor-info">
-                    <h3 className="actor-name">{actor.first_name} {actor.last_name}</h3>
-                    <div className="actor-details">
-                      <span className="film-count">{actor.film_count} films</span>
+                <Link key={actor.actor_id} to={`/actors/${actor.actor_id}`} className="actor-item-link">
+                  <div className="actor-item">
+                    <div className="actor-rank">#{index + 1}</div>
+                    <div className="actor-info">
+                      <h3 className="actor-name">{actor.first_name} {actor.last_name}</h3>
+                      <div className="actor-details">
+                        <span className="film-count">{actor.film_count} films</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

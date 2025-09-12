@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import FilmDetails from './pages/FilmDetails';
+import ActorDetails from './pages/ActorDetails';
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/films/:id" element={<FilmDetails />} />
+          <Route path="/actors/:id" element={<ActorDetails />} />
         </Routes>
       </Router>
     </div>
