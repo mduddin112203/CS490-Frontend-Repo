@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { filmsAPI } from '../services/api';
 import './FilmDetails.css';
 
@@ -64,9 +64,12 @@ const FilmDetails = () => {
   return (
     <div className="film-details-page">
       <div className="back-button">
-        <button onClick={() => window.history.back()} className="btn btn-secondary">
-          ← Back to Films
-        </button>
+        <Link to="/" className="btn btn-secondary">
+          ← Back to Home
+        </Link>
+        <Link to="/films" className="btn btn-primary">
+          Search Films
+        </Link>
       </div>
 
       <div className="film-header">
@@ -110,9 +113,15 @@ const FilmDetails = () => {
               <h3>Cast</h3>
               <div className="actors-list">
                 {film.actors.map((actor) => (
-                  <div key={actor.actor_id} className="actor-item">
-                    {actor.first_name} {actor.last_name}
-                  </div>
+                  <Link 
+                    key={actor.actor_id} 
+                    to={`/actors/${actor.actor_id}`} 
+                    className="actor-item-link"
+                  >
+                    <div className="actor-item">
+                      {actor.first_name} {actor.last_name}
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
