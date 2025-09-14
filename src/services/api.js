@@ -14,6 +14,7 @@ export const filmsAPI = {
   getTopRented: () => api.get('/films/top-rented'),
   getFilmById: (id) => api.get(`/films/${id}`),
   searchFilms: (query) => api.get(`/films/search?q=${encodeURIComponent(query)}`),
+  rentFilm: (filmId, customerId) => api.post(`/films/${filmId}/rent`, { customer_id: customerId }),
 };
 
 // Actors API

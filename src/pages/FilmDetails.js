@@ -8,6 +8,9 @@ const FilmDetails = () => {
   const [film, setFilm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rentalLoading, setRentalLoading] = useState(false);
+  const [rentalMessage, setRentalMessage] = useState(null);
+  const [customerId, setCustomerId] = useState('');
 
   useEffect(() => {
     const fetchFilmDetails = async () => {
@@ -28,6 +31,32 @@ const FilmDetails = () => {
       fetchFilmDetails();
     }
   }, [id]);
+
+  const handleRental = async (e) => {
+    e.preventDefault();
+    if (!customerId.trim()) {
+      setRentalMessage({ type: 'error', text: 'Please enter a customer ID' });
+      return;
+    }
+
+    try {
+      setRentalLoading(true);
+      setRentalMessage(null);
+      const response = await filmsAPI.rentFilm(id, customerId.trim());
+      setRentalMessage({ 
+        type: 'success', 
+        text: `Film rented successfully! Rental ID: ${response.data.rental_id}` 
+      });
+      setCustomerId('');
+    } catch (err) {
+      setRentalMessage({ 
+        type: 'error', 
+        text: err.response?.data?.error || 'Failed to rent film' 
+      });
+    } finally {
+      setRentalLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -126,6 +155,35 @@ const FilmDetails = () => {
               </div>
             </div>
           )}
+
+          <div className="info-section">
+            <h3>Rent This Film</h3>
+            <form onSubmit={handleRental} className="rental-form">
+              <div className="rental-input-group">
+                <input
+                  type="number"
+                  value={customerId}
+                  onChange={(e) => setCustomerId(e.target.value)}
+                  placeholder="Enter Customer ID"
+                  className="rental-input"
+                  min="1"
+                  required
+                />
+                <button 
+                  type="submit" 
+                  className="rental-button"
+                  disabled={rentalLoading}
+                >
+                  {rentalLoading ? 'Renting...' : 'Rent Film'}
+                </button>
+              </div>
+              {rentalMessage && (
+                <div className={`rental-message ${rentalMessage.type}`}>
+                  {rentalMessage.text}
+                </div>
+              )}
+            </form>
+          </div>
         </div>
       </div>
     </div>
