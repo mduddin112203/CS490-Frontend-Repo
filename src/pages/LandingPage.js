@@ -55,6 +55,7 @@ const LandingPage = () => {
         <p>Your premier destination for movie rentals and entertainment</p>
         <div className="hero-actions">
           <Link to="/films" className="hero-button">Search Films</Link>
+          <Link to="/customers" className="hero-button">View Customers</Link>
         </div>
       </div>
 

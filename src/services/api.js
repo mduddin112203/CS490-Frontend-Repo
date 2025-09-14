@@ -23,4 +23,10 @@ export const actorsAPI = {
   getActorById: (id) => api.get(`/actors/${id}`),
 };
 
+// Customers API
+export const customersAPI = {
+  getCustomers: (page = 1, limit = 20) => api.get(`/customers?page=${page}&limit=${limit}`),
+  getCustomerById: (id) => api.get(`/customers/${id}`),
+};
+
 export default api;
