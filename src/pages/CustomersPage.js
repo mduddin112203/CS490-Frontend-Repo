@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { customersAPI } from '../services/api';
+import AddCustomerModal from '../components/AddCustomerModal';
 import './CustomersPage.css';
 
 const CustomersPage = () => {
@@ -11,6 +12,7 @@ const CustomersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(20);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -172,7 +174,19 @@ const CustomersPage = () => {
             </button>
           </div>
         )}
+
+        <div style={{ marginTop: 16 }}>
+          <button onClick={() => setShowAddModal(true)} className="pagination-button">Add New Customer</button>
+        </div>
       </div>
+      <AddCustomerModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSuccess={() => {
+          setShowAddModal(false);
+          setCurrentPage(1);
+        }}
+      />
     </div>
   );
 };

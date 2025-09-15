@@ -31,6 +31,7 @@ export const customersAPI = {
     return api.get(`/customers?${params.toString()}`);
   },
   getCustomerById: (id) => api.get(`/customers/${id}`),
+  createCustomer: (data) => api.post('/customers', data),
 };
 
 export default api;
