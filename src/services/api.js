@@ -25,7 +25,11 @@ export const actorsAPI = {
 
 // Customers API
 export const customersAPI = {
-  getCustomers: (page = 1, limit = 20) => api.get(`/customers?page=${page}&limit=${limit}`),
+  getCustomers: (page = 1, limit = 20, search = '') => {
+    const params = new URLSearchParams({ page, limit });
+    if (search.trim()) params.append('search', search.trim());
+    return api.get(`/customers?${params.toString()}`);
+  },
   getCustomerById: (id) => api.get(`/customers/${id}`),
 };
 

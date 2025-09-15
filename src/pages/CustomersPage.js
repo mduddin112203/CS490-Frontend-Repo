@@ -10,15 +10,18 @@ const CustomersPage = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(20);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await customersAPI.getCustomers(currentPage, limit);
+        const response = await customersAPI.getCustomers(currentPage, limit, searchQuery);
         setCustomers(response.data.customers);
         setPagination(response.data.pagination);
+        setSearchTerm(response.data.search || '');
       } catch (err) {
         setError('Failed to load customers. Please try again later.');
         console.error('Error fetching customers:', err);
@@ -28,11 +31,26 @@ const CustomersPage = () => {
     };
 
     fetchCustomers();
-  }, [currentPage, limit]);
+  }, [currentPage, limit, searchQuery]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     window.scrollTo(0, 0);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchQuery(searchQuery);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setCurrentPage(1);
   };
 
   const formatDate = (dateString) => {
@@ -66,6 +84,28 @@ const CustomersPage = () => {
       </div>
 
       <div className="customers-content">
+        <div className="search-section">
+          <form onSubmit={handleSearch} className="search-form">
+            <div className="search-input-group">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                placeholder="Search by ID, first name, or last name..."
+                className="search-input"
+              />
+              <button type="submit" className="search-button">
+                Search
+              </button>
+              {searchTerm && (
+                <button type="button" onClick={clearSearch} className="clear-button">
+                  Clear
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+
         <div className="customers-stats">
           <div className="stat-card">
             <h3>Total Customers</h3>
@@ -75,6 +115,12 @@ const CustomersPage = () => {
             <h3>Current Page</h3>
             <p className="stat-number">{pagination.currentPage} of {pagination.totalPages}</p>
           </div>
+          {searchTerm && (
+            <div className="stat-card">
+              <h3>Search Results</h3>
+              <p className="stat-number">"{searchTerm}"</p>
+            </div>
+          )}
         </div>
 
         <div className="customers-list">
