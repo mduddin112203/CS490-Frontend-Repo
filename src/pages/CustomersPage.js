@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { customersAPI } from '../services/api';
 import AddCustomerModal from '../components/AddCustomerModal';
+import EditCustomerModal from '../components/EditCustomerModal';
 import './CustomersPage.css';
 
 const CustomersPage = () => {
@@ -13,6 +14,8 @@ const CustomersPage = () => {
   const [limit] = useState(20);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -57,6 +60,16 @@ const CustomersPage = () => {
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleEditCustomer = (customer) => {
+    setEditingCustomer(customer);
+    setShowEditModal(true);
+  };
+
+  const refreshCustomers = () => {
+    // Trigger useEffect to refetch data
+    setCurrentPage(currentPage);
   };
 
   if (loading) {
@@ -145,6 +158,21 @@ const CustomersPage = () => {
                   <p className="customer-date">
                     Member since: {formatDate(customer.create_date)}
                   </p>
+                  <button 
+                    onClick={() => handleEditCustomer(customer)}
+                    className="edit-button"
+                    style={{ 
+                      padding: '4px 8px', 
+                      fontSize: '12px', 
+                      backgroundColor: '#007bff', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Edit
+                  </button>
                 </div>
               </div>
             </div>
@@ -186,6 +214,19 @@ const CustomersPage = () => {
           setShowAddModal(false);
           setCurrentPage(1);
         }}
+      />
+      <EditCustomerModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingCustomer(null);
+        }}
+        onSuccess={() => {
+          setShowEditModal(false);
+          setEditingCustomer(null);
+          refreshCustomers();
+        }}
+        customer={editingCustomer}
       />
     </div>
   );
