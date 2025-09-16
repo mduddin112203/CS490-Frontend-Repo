@@ -25,14 +25,18 @@ export const actorsAPI = {
 
 // Customers API
 export const customersAPI = {
-  getCustomers: (page = 1, limit = 20, search = '') => {
+  getCustomers: (page = 1, limit = 20) => {
     const params = new URLSearchParams({ page, limit });
-    if (search.trim()) params.append('search', search.trim());
     return api.get(`/customers?${params.toString()}`);
   },
   getCustomerById: (id) => api.get(`/customers/${id}`),
   createCustomer: (data) => api.post('/customers', data),
-  updateCustomer: (id, data) => api.put(`/customers/${id}`, data),
+  searchCustomers: (filters) => {
+    const params = new URLSearchParams();
+    if (filters.customerId) params.append('customerId', filters.customerId);
+    if (filters.name) params.append('name', filters.name);
+    return api.get(`/customers/search?${params.toString()}`);
+  },
 };
 
 export default api;

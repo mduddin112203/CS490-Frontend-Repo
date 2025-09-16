@@ -1,78 +1,188 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { customersAPI } from '../services/api';
 import AddCustomerModal from '../components/AddCustomerModal';
-import EditCustomerModal from '../components/EditCustomerModal';
 import './CustomersPage.css';
 
 const CustomersPage = () => {
   const [customers, setCustomers] = useState([]);
-  const [pagination, setPagination] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [limit] = useState(20);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchFilters, setSearchFilters] = useState({
+    customerId: '',
+    name: ''
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editingCustomer, setEditingCustomer] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [pageJump, setPageJump] = useState('');
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'none' });
+
+  const itemsPerPage = 20;
+
+  const fetchCustomers = useCallback( async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await customersAPI.getCustomers(currentPage, itemsPerPage);
+      setCustomers(response.data.customers);
+      setTotalPages(response.data.pagination.totalPages);
+    } catch (err) {
+      setError('Failed to load customers. Please try again later.');
+      console.error('Error fetching customers:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage]);
 
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await customersAPI.getCustomers(currentPage, limit, searchQuery);
-        setCustomers(response.data.customers);
-        setPagination(response.data.pagination);
-        setSearchTerm(response.data.search || '');
-      } catch (err) {
-        setError('Failed to load customers. Please try again later.');
-        console.error('Error fetching customers:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCustomers();
-  }, [currentPage, limit, searchQuery]);
+  }, [fetchCustomers]);
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    window.scrollTo(0, 0);
-  };
-
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    setSearchQuery(searchQuery);
-    setCurrentPage(1); // Reset to first page when searching
-  };
+    
+    // Check if any filter has a value
+    const hasFilters = Object.values(searchFilters).some(value => value.trim() !== '');
+    
+    if (!hasFilters) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
 
-  const handleSearchInputChange = (e) => {
-    setSearchQuery(e.target.value);
+    try {
+      setIsSearching(true);
+      setSearchLoading(true);
+      setError(null);
+      const response = await customersAPI.searchCustomers(searchFilters);
+      setSearchResults(response.data);
+    } catch (err) {
+      setError('Failed to search customers. Please try again later.');
+      console.error('Error searching customers:', err);
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   const clearSearch = () => {
     setSearchQuery('');
-    setCurrentPage(1);
+    setSearchFilters({
+      customerId: '',
+      name: ''
+    });
+    setSearchResults([]);
+    setIsSearching(false);
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
+  const handleFilterChange = (field, value) => {
+    setSearchFilters(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const handleEditCustomer = (customer) => {
-    setEditingCustomer(customer);
-    setShowEditModal(true);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setPageJump(''); // Clear page jump input
+    window.scrollTo(0, 0);
   };
 
-  const refreshCustomers = () => {
-    // Trigger useEffect to refetch data
-    setCurrentPage(currentPage);
+  const handlePageJump = (e) => {
+    e.preventDefault();
+    const pageNum = parseInt(pageJump);
+    if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+      setCurrentPage(pageNum);
+      setPageJump('');
+      window.scrollTo(0, 0);
+    } else {
+      setError(`Please enter a valid page number between 1 and ${totalPages}`);
+      setTimeout(() => setError(null), 3000);
+    }
   };
 
-  if (loading) {
+  const handleAddSuccess = () => {
+    setSuccessMessage('Customer added successfully!');
+    fetchCustomers(); // Refresh the list
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    
+    if (sortConfig.key === key) {
+      if (sortConfig.direction === 'asc') {
+        direction = 'desc';
+      } else if (sortConfig.direction === 'desc') {
+        direction = 'none';
+      }
+    }
+    
+    setSortConfig({ key, direction });
+  };
+
+  const sortCustomers = (customers) => {
+    if (sortConfig.direction === 'none') {
+      return customers;
+    }
+
+    return [...customers].sort((a, b) => {
+      let aValue, bValue;
+      
+      switch (sortConfig.key) {
+        case 'id':
+          aValue = a.customer_id;
+          bValue = b.customer_id;
+          break;
+        case 'name':
+          aValue = `${a.first_name} ${a.last_name}`.toLowerCase();
+          bValue = `${b.first_name} ${b.last_name}`.toLowerCase();
+          break;
+        case 'email':
+          aValue = a.email.toLowerCase();
+          bValue = b.email.toLowerCase();
+          break;
+        case 'status':
+          aValue = a.active ? 1 : 0;
+          bValue = b.active ? 1 : 0;
+          break;
+        default:
+          return 0;
+      }
+      
+      if (aValue < bValue) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return ''; // No icon until clicked
+    }
+    
+    switch (sortConfig.direction) {
+      case 'asc':
+        return ' ↑';
+      case 'desc':
+        return ' ↓';
+      default:
+        return ''; // No icon when no sorting
+    }
+  };
+
+  const displayCustomers = isSearching ? sortCustomers(searchResults) : sortCustomers(customers);
+
+  if (loading && !isSearching) {
     return (
       <div className="loading">
         <h2>Loading customers...</h2>
@@ -80,153 +190,228 @@ const CustomersPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="error">
-        <h2>Error</h2>
-        <p>{error}</p>
-        <Link to="/" className="back-link">← Back to Home</Link>
-      </div>
-    );
-  }
-
   return (
     <div className="customers-page">
-      <div className="customers-header">
-        <Link to="/" className="back-link">← Back to Home</Link>
-        <h1>Customers</h1>
-        <p className="customers-subtitle">Manage customer information</p>
+      <div className="page-header">
+        <h1>Customer Management</h1>
+        <p>Manage your customer database and rental history</p>
       </div>
 
-      <div className="customers-content">
-        <div className="search-section">
-          <form onSubmit={handleSearch} className="search-form">
-            <div className="search-input-group">
+      {/* Search Section */}
+      <div className="search-section">
+        <h3>Find Someone in Particular</h3>
+        <p>Filter customers by the following values:</p>
+        <form onSubmit={handleSearch} className="search-form">
+          <div className="search-filters">
+            <div className="filter-group">
+              <label htmlFor="customerId">Customer ID:</label>
               <input
                 type="text"
-                value={searchQuery}
-                onChange={handleSearchInputChange}
-                placeholder="Search by ID, first name, or last name..."
-                className="search-input"
+                id="customerId"
+                value={searchFilters.customerId}
+                onChange={(e) => handleFilterChange('customerId', e.target.value)}
+                placeholder="Customer ID"
+                className="filter-input"
               />
-              <button type="submit" className="search-button">
-                Search
+            </div>
+            
+            <div className="filter-group">
+              <label htmlFor="name">Name:</label>
+              <input
+                type="text"
+                id="name"
+                value={searchFilters.name}
+                onChange={(e) => handleFilterChange('name', e.target.value)}
+                placeholder="Name (first, last, or full name)"
+                className="filter-input"
+              />
+            </div>
+          </div>
+          
+          <div className="search-actions">
+            <button type="submit" className="btn btn-primary">
+              {searchLoading ? 'Searching...' : 'Search'}
+            </button>
+            {isSearching && (
+              <button type="button" onClick={clearSearch} className="btn btn-secondary">
+                Clear
               </button>
-              {searchTerm && (
-                <button type="button" onClick={clearSearch} className="clear-button">
-                  Clear
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-
-        <div className="customers-stats">
-          <div className="stat-card">
-            <h3>Total Customers</h3>
-            <p className="stat-number">{pagination.totalCustomers}</p>
+            )}
           </div>
-          <div className="stat-card">
-            <h3>Current Page</h3>
-            <p className="stat-number">{pagination.currentPage} of {pagination.totalPages}</p>
+        </form>
+      </div>
+
+      {error && (
+        <div className="error">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="success">
+          <p>{successMessage}</p>
+        </div>
+      )}
+
+      {/* Results Section */}
+      <div className="results-section">
+        {isSearching ? (
+          <div className="search-results">
+            <h2>Search Results</h2>
+            <p>{searchResults.length} customers found</p>
           </div>
-          {searchTerm && (
-            <div className="stat-card">
-              <h3>Search Results</h3>
-              <p className="stat-number">"{searchTerm}"</p>
-            </div>
-          )}
-        </div>
-
-        <div className="customers-list">
-          {customers.map((customer) => (
-            <div key={customer.customer_id} className="customer-card">
-              <div className="customer-header">
-                <h3 className="customer-name">
-                  {customer.first_name} {customer.last_name}
-                </h3>
-                <span className={`customer-status ${customer.active ? 'active' : 'inactive'}`}>
-                  {customer.active ? 'Active' : 'Inactive'}
-                </span>
+        ) : (
+          <div className="browse-results">
+            <div className="browse-header">
+              <div>
+                <h2>All Customers</h2>
+                <p>Page {currentPage} of {totalPages}</p>
               </div>
-              <div className="customer-details">
-                <div className="customer-info">
-                  <p className="customer-email">{customer.email}</p>
-                  <p className="customer-id">ID: {customer.customer_id}</p>
-                </div>
-                <div className="customer-meta">
-                  <p className="customer-date">
-                    Member since: {formatDate(customer.create_date)}
-                  </p>
-                  <button 
-                    onClick={() => handleEditCustomer(customer)}
-                    className="edit-button"
-                    style={{ 
-                      padding: '4px 8px', 
-                      fontSize: '12px', 
-                      backgroundColor: '#007bff', 
-                      color: 'white', 
-                      border: 'none', 
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
+              <button 
+                onClick={() => setShowAddModal(true)}
+                className="btn btn-primary"
+              >
+                Add New Customer
+              </button>
             </div>
-          ))}
-        </div>
-
-        {pagination.totalPages > 1 && (
-          <div className="pagination">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={!pagination.hasPrev}
-              className="pagination-button"
-            >
-              ← Previous
-            </button>
-            
-            <div className="pagination-info">
-              Page {pagination.currentPage} of {pagination.totalPages}
-            </div>
-            
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={!pagination.hasNext}
-              className="pagination-button"
-            >
-              Next →
-            </button>
           </div>
         )}
 
-        <div style={{ marginTop: 16 }}>
-          <button onClick={() => setShowAddModal(true)} className="pagination-button">Add New Customer</button>
-        </div>
+        {displayCustomers.length === 0 ? (
+          <div className="no-results">
+            <p>No customers found. Try adjusting your search criteria.</p>
+          </div>
+        ) : (
+          <>
+            <div className="customers-table-container">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th 
+                      className="sortable" 
+                      onClick={() => handleSort('id')}
+                      title="Click to sort"
+                    >
+                      ID {getSortIcon('id')}
+                    </th>
+                    <th 
+                      className="sortable" 
+                      onClick={() => handleSort('name')}
+                      title="Click to sort"
+                    >
+                      Name {getSortIcon('name')}
+                    </th>
+                    <th 
+                      className="sortable" 
+                      onClick={() => handleSort('email')}
+                      title="Click to sort"
+                    >
+                      Email {getSortIcon('email')}
+                    </th>
+                    <th 
+                      className="sortable" 
+                      onClick={() => handleSort('status')}
+                      title="Click to sort"
+                    >
+                      Status {getSortIcon('status')}
+                    </th>
+                    <th>Member Since</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayCustomers.map((customer) => (
+                    <tr key={customer.customer_id}>
+                      <td>{customer.customer_id}</td>
+                      <td>
+                        <strong>{customer.first_name} {customer.last_name}</strong>
+                      </td>
+                      <td>{customer.email}</td>
+                      <td>
+                        <span className={`status-badge ${customer.active ? 'active' : 'inactive'}`}>
+                          {customer.active ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td>
+                        {new Date(customer.create_date).toLocaleDateString()}
+                      </td>
+                      <td>
+                        <div className="action-buttons">
+                          <Link
+                            to={`/customers/${customer.customer_id}`}
+                            className="btn btn-primary btn-sm"
+                          >
+                            View Details
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination - only show when not searching */}
+            {!isSearching && totalPages > 1 && (
+              <div className="pagination">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="btn btn-secondary"
+                >
+                  Previous
+                </button>
+                
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  const pageNum = Math.max(1, currentPage - 2) + i;
+                  if (pageNum > totalPages) return null;
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`btn ${pageNum === currentPage ? 'active' : 'btn-secondary'}`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="btn btn-secondary"
+                >
+                  Next
+                </button>
+                
+                {/* Page Jump */}
+                <div className="page-jump">
+                  <form onSubmit={handlePageJump} className="page-jump-form">
+                    <input
+                      type="number"
+                      value={pageJump}
+                      onChange={(e) => setPageJump(e.target.value)}
+                      placeholder={`1-${totalPages}`}
+                      className="page-jump-input"
+                      min="1"
+                      max={totalPages}
+                    />
+                    <button type="submit" className="btn btn-primary btn-sm">
+                      Go
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
+
       <AddCustomerModal
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
-        onSuccess={() => {
-          setShowAddModal(false);
-          setCurrentPage(1);
-        }}
-      />
-      <EditCustomerModal
-        isOpen={showEditModal}
-        onClose={() => {
-          setShowEditModal(false);
-          setEditingCustomer(null);
-        }}
-        onSuccess={() => {
-          setShowEditModal(false);
-          setEditingCustomer(null);
-          refreshCustomers();
-        }}
-        customer={editingCustomer}
+        onSuccess={handleAddSuccess}
       />
     </div>
   );
