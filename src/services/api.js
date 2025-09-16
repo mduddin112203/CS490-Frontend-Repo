@@ -39,6 +39,7 @@ export const customersAPI = {
     if (filters.name) params.append('name', filters.name);
     return api.get(`/customers/search?${params.toString()}`);
   },
+  returnRental: (customerId, rentalId) => api.post(`/customers/${customerId}/return-rental`, { rental_id: rentalId }),
 };
 
 export default api;
