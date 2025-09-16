@@ -30,7 +30,9 @@ export const customersAPI = {
     return api.get(`/customers?${params.toString()}`);
   },
   getCustomerById: (id) => api.get(`/customers/${id}`),
-  createCustomer: (data) => api.post('/customers', data),
+  createCustomer: (customerData) => api.post('/customers', customerData),
+  updateCustomer: (id, customerData) => api.put(`/customers/${id}`, customerData),
+  deleteCustomer: (id) => api.delete(`/customers/${id}`),
   searchCustomers: (filters) => {
     const params = new URLSearchParams();
     if (filters.customerId) params.append('customerId', filters.customerId);
