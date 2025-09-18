@@ -1,128 +1,21 @@
-.actor-details-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.actor-header {
-  background: var(--card-bg);
-  border-radius: 8px;
-  padding: 3rem;
-  margin-bottom: 3rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  border: 1px solid var(--border-gray);
-  text-align: center;
-}
-
-.actor-name {
-  font-size: 3.2rem;
-  color: var(--light-text);
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
-}
-
-.actor-info {
-  color: var(--muted-text);
-  font-size: 1.6rem;
-}
-
-.filmography-section {
-  background: var(--card-bg);
-  border-radius: 8px;
-  padding: 2.5rem;
-  margin-bottom: 3rem;
-  border: 1px solid var(--border-gray);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.filmography-section h2 {
-  color: var(--light-text);
-  font-size: 2.4rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-weight: 600;
-}
-
-.films-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.film-card {
-  background: var(--secondary-dark);
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid var(--border-gray);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.film-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-  border-color: var(--wine-red);
-}
-
-.film-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: var(--light-text);
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.film-genre {
-  background: var(--wine-red);
-  color: var(--light-text);
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
-  font-size: 1.2rem;
-  display: inline-block;
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-
-.film-description {
-  color: var(--muted-text);
-  font-size: 1.3rem;
-  line-height: 1.5;
-}
-
-.back-button {
-  background: var(--card-bg);
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 3rem;
-  border: 1px solid var(--border-gray);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  text-align: center;
-}
-
-.no-films {
-  text-align: center;
-  padding: 4rem;
-  color: var(--muted-text);
-  font-size: 1.6rem;
-}
-
+.actor-details-page { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.actor-header { background: var(--card-bg); border-radius: 8px; padding: 3rem; margin-bottom: 3rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 1px solid var(--border-gray); text-align: center; }
+.actor-name { font-size: 3.2rem; color: var(--light-text); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.actor-info { color: var(--muted-text); font-size: 1.6rem; }
+.filmography-section { background: var(--card-bg); border-radius: 8px; padding: 2.5rem; margin-bottom: 3rem; border: 1px solid var(--border-gray); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.filmography-section h2 { color: var(--light-text); font-size: 2.4rem; margin-bottom: 2rem; text-align: center; font-weight: 600; }
+.films-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+.film-card { background: var(--secondary-dark); border-radius: 8px; padding: 2rem; border: 1px solid var(--border-gray); transition: all 0.3s ease; cursor: pointer; }
+.film-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.4); border-color: var(--wine-red); }
+.film-title { font-size: 1.6rem; font-weight: 600; color: var(--light-text); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.film-genre { background: var(--wine-red); color: var(--light-text); padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 1.2rem; display: inline-block; margin-bottom: 1rem; font-weight: 500; }
+.film-description { color: var(--muted-text); font-size: 1.3rem; line-height: 1.5; }
+.back-button { background: var(--card-bg); border-radius: 8px; padding: 1.5rem; margin-bottom: 3rem; border: 1px solid var(--border-gray); box-shadow: 0 2px 8px rgba(0,0,0,0.2); text-align: center; }
+.no-films { text-align: center; padding: 4rem; color: var(--muted-text); font-size: 1.6rem; }
 @media (max-width: 768px) {
-  .actor-details-page {
-    padding: 1rem;
-  }
-  
-  .actor-name {
-    font-size: 2.4rem;
-  }
-  
-  .films-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .filmography-section h2 {
-    font-size: 2rem;
-  }
+  .actor-details-page { padding: 1rem; }
+  .actor-name { font-size: 2.4rem; }
+  .films-grid { grid-template-columns: 1fr; }
+  .filmography-section h2 { font-size: 2rem; }
 }
+
