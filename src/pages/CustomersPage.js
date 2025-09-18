@@ -70,7 +70,6 @@ const CustomersPage = () => {
   };
 
   const clearSearch = () => {
-    setSearchQuery('');
     setSearchFilters({
       customerId: '',
       name: ''
