@@ -53,60 +53,66 @@ const LandingPage = () => {
       <div className="hero-section">
         <h1>Welcome to Sakila DVD Store</h1>
         <p>Your premier destination for movie rentals and entertainment</p>
-        <div className="hero-actions">
-          <Link to="/films" className="hero-button">Search Films</Link>
-          <Link to="/customers" className="hero-button">View Customers</Link>
+      </div>
+
+      <div className="content-grid">
+        {/* Top 5 Rented Films */}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Top 5 Rented Films</h2>
+            <p className="card-subtitle">Most popular movies of all time</p>
+          </div>
+          <div className="films-list">
+            {topFilms.map((film, index) => (
+              <div key={film.film_id} className="film-item">
+                <div className="film-rank">#{index + 1}</div>
+                <div className="film-info">
+                  <Link to={`/films/${film.film_id}`} className="film-title">
+                    {film.title}
+                  </Link>
+                  <div className="film-details">
+                    <span className="category">{film.category_name}</span>
+                    <span className="rental-count">{film.rental_count} rentals</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top 5 Actors */}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Top 5 Actors</h2>
+            <p className="card-subtitle">Most prolific actors in our collection</p>
+          </div>
+          <div className="actors-list">
+            {topActors.map((actor, index) => (
+              <div key={actor.actor_id} className="actor-item">
+                <div className="actor-rank">#{index + 1}</div>
+                <div className="actor-info">
+                  <Link to={`/actors/${actor.actor_id}`} className="actor-name">
+                    {actor.first_name} {actor.last_name}
+                  </Link>
+                  <div className="actor-details">
+                    <span className="film-count">{actor.film_count} films</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="content-section">
-        <div className="content-grid">
-          {/* Top 5 Rented Films */}
-          <div className="card">
-            <div className="card-header">
-              <h2 className="card-title">Top 5 Rented Films</h2>
-              <p className="card-subtitle">Most popular movies of all time</p>
-            </div>
-            <div className="films-list">
-              {topFilms.map((film, index) => (
-                <Link key={film.film_id} to={`/films/${film.film_id}`} className="film-item-link">
-                  <div className="film-item">
-                    <div className="film-rank">#{index + 1}</div>
-                    <div className="film-info">
-                      <h3 className="film-title">{film.title}</h3>
-                      <div className="film-details">
-                        <span className="category">{film.category_name}</span>
-                        <span className="rental-count">{film.rental_count} rentals</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Top 5 Actors */}
-          <div className="card">
-            <div className="card-header">
-              <h2 className="card-title">Top 5 Actors</h2>
-              <p className="card-subtitle">Most prolific actors in our collection</p>
-            </div>
-            <div className="actors-list">
-              {topActors.map((actor, index) => (
-                <Link key={actor.actor_id} to={`/actors/${actor.actor_id}`} className="actor-item-link">
-                  <div className="actor-item">
-                    <div className="actor-rank">#{index + 1}</div>
-                    <div className="actor-info">
-                      <h3 className="actor-name">{actor.first_name} {actor.last_name}</h3>
-                      <div className="actor-details">
-                        <span className="film-count">{actor.film_count} films</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
+      <div className="quick-actions">
+        <h2>Quick Actions</h2>
+        <div className="action-buttons">
+          <Link to="/films" className="btn btn-primary">
+            Browse All Films
+          </Link>
+          <Link to="/customers" className="btn btn-secondary">
+            Manage Customers
+          </Link>
         </div>
       </div>
     </div>
