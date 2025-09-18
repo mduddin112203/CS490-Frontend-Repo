@@ -8,7 +8,6 @@ const CustomersPage = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [searchFilters, setSearchFilters] = useState({
     customerId: '',
     name: ''
