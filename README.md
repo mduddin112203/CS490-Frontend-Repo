@@ -18,7 +18,7 @@ React frontend for the Sakila DVD Store management system.
 
 2. **Install dependencies**
    ```bash
-   npm install
+   npm ci
    ```
 
 3. **Start the development server**
@@ -65,6 +65,12 @@ The application will open in your browser at `http://localhost:3000`
 ## Backend Connection
 
 The frontend connects to the backend API at `http://localhost:5001/api`. Make sure the backend server is running before starting the frontend.
+
+If you change Node versions or see webpack plugin errors, clear and reinstall:
+```bash
+rm -rf node_modules
+npm ci
+```
 
 ## Browser Support
 
